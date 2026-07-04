@@ -1,0 +1,30 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+    
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Log in to Dockerhub
+      uses: docker/login-actions@v4
+      with:
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Image
+      uses: docker/build-push-action@v7
+      with:
+        context: .
+        push: true
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/simpleexpress:latest
